@@ -45,7 +45,7 @@
 
     self.BoardView.prototype = {
         draw: function() {
-            for (var i = this.board.elements.lenght - 1; i>= 0; i--) {
+            for (var i = this.board.elements.length - 1; i>= 0; i--) {
                 var el = this.board.elements[i];
                 draw(this.ctx, el);
             }
@@ -56,7 +56,6 @@
         if (element !== null && element.hasOwnProperty("kind")) {
             switch(element.kind) {
             case "rectangle":
-                console.log("Hola");
                 ctx.fillRect(element.x, element.y, element.width, element.height);
                 break;
             }
@@ -69,6 +68,7 @@ self.addEventListener("load", main)
 function main() {
     var board = new Board(800, 400);
     var bar = new Bar(20, 100, 40, 100, board);
+    console.log(bar);
     var canvas = document.getElementById('canvas');
     var board_view = new BoardView(canvas, board);
     board_view.draw();
