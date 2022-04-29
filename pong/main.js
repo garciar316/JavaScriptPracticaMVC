@@ -1,3 +1,4 @@
+//Definicion del tablero donde se van a dibujar los diferentes objetos del juego
 (function () {
     self.Board = function (width, height) {
         this.width = width;
@@ -8,7 +9,7 @@
         this.ball = null;
         this.playing = false;
     }
-
+//Agregar atributos a todos los objetos del tipo Board
     self.Board.prototype = {
         get elements() {
             var elements = this.bars.map(function(bar) { return bar});
@@ -17,7 +18,8 @@
         }
     }
 })();
-
+//Definicion de la bola que posteriormente sera dibujada en el tablero
+//Tambien se definen unos atributos
 (function () {
     self.Ball = function (x, y, radius, board) {
         this.x = x;
@@ -35,7 +37,9 @@
 
         board.ball = this;
     }
+//Agregar los metodos y atributos para todos los objetos del tipo Ball
     self.Ball.prototype = {
+        //Metodo para realizar el movimiento, el eje x se multiplica por la direccion para cambiar la trayectoria
         move: function () {
             this.x += (this.speed_x * this.direction);
             this.y += (this.speed_y);
@@ -65,7 +69,7 @@
         }
     }
 })();
-
+//Definicion del objeto barra y sus atributos
 (function () {
     self.Bar = function (x, y, width, height, board) {
         this.x = x;
@@ -74,23 +78,28 @@
         this.width = width;
         this.height = height;
         this.board = board;
+        //Se agrega al arreglo bars, del atributo borard todas las barras que se definan
         this.board.bars.push(this);
         this.kind = "rectangle";
         this.speed = 20;
     }
+//Agregar los metodos y atributos para todos los objetos del tipo Bar
     self.Bar.prototype = {
+        //Sube el objeto en el eje y, segun la velocidad definida en la definicion del objeto
         down: function () {
             this.y += this.speed;
         },
+        //Baja el objeto en el eje y, segun la velocidad definida en la definicion del objeto
         up: function () {
             this.y -= this.speed;
         },
+        //Escribe por consola la pocicon actual del objeto
         toSring: function () {
             return "x: " + this.x + ", y: " + this.y;
         }
     }
 })();
-
+//Crea un canvas y dibuja en el los objetos
 (function () {
     self.BoardView = function (canvas, board) {
         this.canvas = canvas;
@@ -101,15 +110,18 @@
     }
 
     self.BoardView.prototype = {
+        //Limpia el tablero a medida que se desplazan los objetos para no dejar el rastro del movimiento
         clean: function () {
             this.ctx.clearRect(0, 0, this.board.width, this.board.height)
         },
+        //Llama al metodo que dibuja el objeto en el canvas
         draw: function () {
             for (var i = this.board.elements.length - 1; i >= 0; i--) {
                 var el = this.board.elements[i];
                 draw(this.ctx, el);
             }
         },
+        //Valida si una barra colisiona con la bola
         check_collisions: function () {
             for (var i = this.board.bars.length -1; i >= 0; i--) {
                 var bar = this.board.bars[i];
@@ -118,6 +130,7 @@
                 }
             }
         },
+        //Administra el juego, llamando a los metodos necesarios para que funcione
         play: function () {
             if (this.board.playing) {
                 this.clean();
@@ -152,7 +165,7 @@
         }
         return hit;
     }
-
+//Dibuja un objeto en el canvas, recibe el contexto (canvas) y el elemento
     function draw(ctx, element) {
         switch (element.kind) {
             case "rectangle":
@@ -167,14 +180,14 @@
         }
     }
 })();
-
+//Creacion de los objetos
 var board = new Board(800, 400);
 var bar = new Bar(20, 100, 40, 100, board);
 var bar_2 = new Bar(735, 100, 40, 100, board);
 var canvas = document.getElementById('canvas');
 var board_view = new BoardView(canvas, board);
 var ball = new Ball(350, 100, 10, board);
-
+//Agrega un evento a la pulsacion de teclas, captura la tecla y llama a un mentodo segun corresponda
 document.addEventListener("keydown", function (event) {
     if (event.key === "ArrowUp") {
         event.preventDefault();
@@ -197,7 +210,6 @@ document.addEventListener("keydown", function (event) {
         board.playing = !board.playing;
     }
 })
-
 window.requestAnimationFrame(controller);
 setTimeout(function () {
     ball.direction = -1;
